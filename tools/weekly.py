@@ -86,12 +86,16 @@ def ask(batch):
     body = json.dumps({'model': MODEL, 'temperature': 0, 'response_format': {'type': 'json_object'},
                        'messages': [{'role': 'system', 'content': sys_p}, {'role': 'user', 'content': '\n\n'.join(user)}]}).encode()
     for n in range(3):
+        raw = b''
         try:
             r = urllib.request.urlopen(urllib.request.Request(API, body, {
                 'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Content-Type': 'application/json'}), timeout=120)
-            return json.loads(json.loads(r.read())['choices'][0]['message']['content']).get('items', [])
+            raw = r.read()
+            content = json.loads(raw)['choices'][0]['message']['content']
+            content = re.sub(r'^```(json)?\s*|\s*```$', '', content.strip())
+            return json.loads(content).get('items', [])
         except Exception as e:
-            detail = e.read()[:300] if hasattr(e, 'read') else ''
+            detail = e.read()[:300] if hasattr(e, 'read') else raw[:300]
             print('AI调用失败, 稍后重试', e, detail)
             if getattr(e, 'code', 0) in (401, 403):
                 return None
@@ -153,6 +157,12 @@ def main():
     if not any(l.startswith(LOG_TITLE) for l in L):
         L += ['', '#' * 80, LOG_TITLE,
               '说明：由程序根据新闻标题自动筛选，未改动正文结论；请点开来源链接核对后再引用。', '#' * 80, '']
+    if block[0] in L:  # 同一天重跑: 先删掉当天旧记录
+        s = L.index(block[0])
+        e = s + 1
+        while e < len(L) and not L[e].startswith('—— '):
+            e += 1
+        del L[s - 1 if L[s - 1] == '' else s:e]
     k = next(k for k, l in enumerate(L) if l.startswith(LOG_TITLE))
     while not set(L[k].strip() or 'x') == {'#'}:
         k += 1
