@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>请输入密码</title>
+<style>body{margin:0;font:16px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#1f3b63;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.box{background:#fff;border-radius:10px;padding:24px;width:90%;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+h1{font-size:18px;margin:0 0 14px;color:#1f3b63}input[type=password]{width:100%;box-sizing:border-box;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:6px}
+button{margin-top:12px;width:100%;padding:10px;font-size:16px;border:0;border-radius:6px;background:#3d6fb0;color:#fff;cursor:pointer}
+label{display:block;margin-top:10px;font-size:14px;color:#555}#msg{color:#c62828;font-size:14px;min-height:20px;margin-top:8px}</style></head>
+<body><form class="box" id="f"><h1>机器人/具身智能/AI 公司尽调</h1>
+<input type="password" id="pw" placeholder="请输入密码" autocomplete="current-password" autofocus>
+<label><input type="checkbox" id="rm"> 在这台设备上记住密码</label>
+<button type="submit">打开</button><div id="msg"></div></form>
+<script id="blob" type="application/json">__BLOB__</script>
+<script>
+const D=JSON.parse(document.getElementById('blob').textContent),u=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function open_(pw){
+  const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+  const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:u(D.salt),iterations:D.iter,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+  const gz=await crypto.subtle.decrypt({name:'AES-GCM',iv:u(D.iv)},k,u(D.ct));
+  const h=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  document.open();document.write(h);document.close();
+}
+const m=document.getElementById('msg');
+document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在解密…';
+  try{if(document.getElementById('rm').checked)localStorage.setItem('ddpw',pw);await open_(pw)}catch(x){m.textContent='密码不对，请重试';localStorage.removeItem('ddpw')}};
+const s=localStorage.getItem('ddpw');if(s)open_(s).catch(()=>{localStorage.removeItem('ddpw');m.textContent='保存的密码已失效，请重新输入'});
+</script></body></html>
