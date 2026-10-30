@@ -37,7 +37,8 @@ jobs:
       - run: pip install cryptography
       - name: 抓新闻并写入本周更新记录
         if: ${{ github.event_name == 'schedule' || !inputs.skip_news }}
-        run: python tools/weekly.py
+        run: python -u tools/weekly.py
+        timeout-minutes: 40
       - name: 保存加密数据
         run: |
           git config user.name "github-actions[bot]"

@@ -91,8 +91,11 @@ def ask(batch):
                 'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Content-Type': 'application/json'}), timeout=120)
             return json.loads(json.loads(r.read())['choices'][0]['message']['content']).get('items', [])
         except Exception as e:
-            print('AI调用失败, 稍后重试', e)
-            time.sleep(60 * (n + 1))
+            detail = e.read()[:300] if hasattr(e, 'read') else ''
+            print('AI调用失败, 稍后重试', e, detail)
+            if getattr(e, 'code', 0) in (401, 403):
+                return None
+            time.sleep(30 * (n + 1))
     return None
 
 
@@ -113,7 +116,8 @@ def main():
     for i in range(0, len(cands), 6):
         batch = cands[i:i + 6]
         res = ask(batch)
-        time.sleep(8)
+        print(f'AI判断 {i + len(batch)}/{len(cands)}', '失败' if res is None else f'{len(res)}条')
+        time.sleep(5)
         if res is None:
             failed += [c['name'] for c in batch]
             continue
