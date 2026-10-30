@@ -58,7 +58,7 @@ def news(q):
     p = {'q': f'"{q}" when:7d', 'hl': 'zh-CN' if zh else 'en-US', 'gl': 'CN' if zh else 'US', 'ceid': 'CN:zh-Hans' if zh else 'US:en'}
     url = 'https://news.google.com/rss/search?' + urllib.parse.urlencode(p)
     try:
-        x = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=30).read()
+        x = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=15).read()
     except Exception as e:
         print('RSS失败', q, e)
         return []
@@ -85,7 +85,7 @@ def ask(batch):
                     '\n'.join(f"[{i}] {n['date']} {n['src']}：{n['title']}" for i, n in enumerate(c['news'])))
     body = json.dumps({'model': MODEL, 'temperature': 0, 'response_format': {'type': 'json_object'},
                        'messages': [{'role': 'system', 'content': sys_p}, {'role': 'user', 'content': '\n\n'.join(user)}]}).encode()
-    for n in range(4):
+    for n in range(3):
         try:
             r = urllib.request.urlopen(urllib.request.Request(API, body, {
                 'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Content-Type': 'application/json'}), timeout=120)
@@ -95,7 +95,7 @@ def ask(batch):
             print('AI调用失败, 稍后重试', e, detail)
             if getattr(e, 'code', 0) in (401, 403):
                 return None
-            time.sleep(30 * (n + 1))
+            time.sleep(20 * (n + 1))
     return None
 
 
@@ -105,17 +105,28 @@ def main():
     seen = set(json.load(open(SEEN))) if os.path.exists(SEEN) else set()
     h = lambda s: hashlib.sha1(s.encode()).hexdigest()[:16]
     cands = []
-    for q, c in targets(L).items():
+    t0 = time.time()
+    T = targets(L)
+    for n_, (q, c) in enumerate(T.items(), 1):
         ns = [n for n in news(q) if h(n['link']) not in seen]
-        time.sleep(1)
         if ns:
             c['news'] = ns
             cands.append(c)
+        if n_ % 20 == 0:
+            print(f'新闻 {n_}/{len(T)} 用时{int(time.time() - t0)}秒')
+        if time.time() - t0 > 600:
+            print('抓新闻超过10分钟, 剩余公司下周再查')
+            break
     print('目标公司有新新闻:', len(cands))
     lines, failed = [], []
+    bad = 0
     for i in range(0, len(cands), 6):
         batch = cands[i:i + 6]
+        if bad >= 2 or time.time() - t0 > 1500:
+            failed += [c['name'] for c in batch]
+            continue
         res = ask(batch)
+        bad = bad + 1 if res is None else 0
         print(f'AI判断 {i + len(batch)}/{len(cands)}', '失败' if res is None else f'{len(res)}条')
         time.sleep(5)
         if res is None:
