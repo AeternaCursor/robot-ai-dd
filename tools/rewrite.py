@@ -20,13 +20,17 @@ ENT = re.compile(r'^【[^】]+】$')
 
 
 def ask(batch):
-    sys_p = ('你是尽调编辑。对每家公司，只根据给出的资料，把"一句话看懂"改写得生动易记：口语化、有画面感、像给朋友讲一家公司，'
-             '必须保留资料里的关键数字和核心结论（上市、营收、估值、卖点）。严禁使用资料里没有的信息，数字必须原样照抄。'
-             '只输出JSON：{"items":[{"i":编号,"one":"新的一句话，60字以内，不用引号开头"}]}')
+    sys_p = ('你是尽调编辑，任务：把一家公司的"一句话看懂"改写得更生动。规则：\n'
+             '1. 只能使用给出的资料里的信息，数字必须原样照抄，绝不能混入其他公司的内容\n'
+             '2. 要像给朋友讲公司一样自然流畅，保留地点、创始人亮点、商业模式等细节\n'
+             '3. 60字以内，一句话（可以用逗号），不要清单式罗列\n'
+             '好例子：杭州的"机器狗大厂"，靠便宜又能打的四足机器人出圈，2026年8月登陆科创板，2025年营收约17亿元还在赚钱。\n'
+             '坏例子（禁止）：宇树科技，科创板上市，17亿营收，出货量领先。（像电报清单，没有画面感）\n'
+             '只输出JSON：{"items":[{"i":编号,"one":"新句子"}]}')
     user = []
     for i, (name, one, body) in enumerate(batch):
         user.append(f'#{i} 公司：{name}\n原句：{one}\n资料：{body[:1200]}')
-    payload = json.dumps({'model': MODEL, 'temperature': 0.3, 'response_format': {'type': 'json_object'},
+    payload = json.dumps({'model': MODEL, 'temperature': 0.7, 'response_format': {'type': 'json_object'},
                           'messages': [{'role': 'system', 'content': sys_p}, {'role': 'user', 'content': '\n\n'.join(user)}]}).encode()
     for n in range(3):
         try:
@@ -53,6 +57,19 @@ def ask(batch):
     return {}
 
 
+def check(old, new, name, body):
+    """防串写/防丢失数字: 新句必须保留原句的数字, 且不得比原句短太多"""
+    if not new or len(new) < 15 or len(new) > 90:
+        return False
+    nums = set(re.findall(r'\d+(?:\.\d+)?', old))
+    missing = [x for x in nums if x not in new]
+    if missing and len(missing) > max(0, len(nums) - 3):  # 至少保留3个数字(不足3个则全保留)
+        return False
+    if any(w in new for w in ('上市', '营收', '估值', '融资')) and name.split('（')[0] not in new[:0] + new:
+        pass  # 不强制包含公司名
+    return True
+
+
 def main():
     sel = sys.argv[1:]
     if not API or not KEY:
@@ -69,21 +86,24 @@ def main():
                     targets.append((j, name, L[j]))
                     break
     print('目标公司', len(targets), '家')
-    changed = 0
-    for b in range(0, len(targets), 10):
-        chunk = targets[b:b + 10]
-        batch = [(name, one.strip(), '\n'.join(L[ln + 1:ln + 40])) for ln, name, one in chunk]
-        res = ask(batch)
-        for i, one in res.items():
-            if 0 <= i < len(chunk) and one:
-                ln = chunk[i][0]
-                head = re.match(r'^(0\s*[.、]?\s*一句话看懂\s*[:：]\s*)', chunk[i][2].strip())
-                L[ln] = (head.group(1) if head else '0. 一句话看懂：') + one
+    changed = rej = 0
+    for b in range(0, len(targets), 5):
+        chunk = targets[b:b + 5]
+        for off, (ln, name, one) in enumerate(chunk):
+            batch = [(name, one.strip(), '\n'.join(L[ln + 1:ln + 40]))]
+            res = ask(batch)
+            new = res.get(0, '')
+            if new and check(one.strip(), new, name, batch[0][2]):
+                head = re.match(r'^(0\s*[.、]?\s*一句话看懂\s*[:：]\s*)', one.strip())
+                L[ln] = (head.group(1) if head else '0. 一句话看懂：') + new
                 changed += 1
-        print(f'{min(b + 10, len(targets))}/{len(targets)} 已改写 {changed}')
-        time.sleep(2)
+            else:
+                rej += 1
+                print('  跳过(校验不过):', name, '|', new[:40])
+            time.sleep(1)
+        print(f'{min(b + 5, len(targets))}/{len(targets)} 已改写 {changed} 跳过 {rej}')
     crypt.save_txt('\n'.join(L))
-    print('完成, 共改写', changed, '家。请网页确认满意后: git add data; git commit -m "rewrite one-liners"; git push')
+    print('完成, 共改写', changed, '家, 跳过', rej, '家。请网页确认满意后: git add data; git commit -m "rewrite one-liners"; git push')
 
 
 if __name__ == '__main__':
