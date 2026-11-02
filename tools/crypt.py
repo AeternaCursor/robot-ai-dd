@@ -89,6 +89,12 @@ if __name__ == '__main__':
             open(r'd:\Jump\网页密码.txt', 'w', encoding='utf-8').write(new)
             print('已写入 d:\\Jump\\网页密码.txt')
         print('完成。接下来:\n 1. 把仓库推上去(git add data; git commit; git push)\n 2. 到 GitHub Settings->Secrets 把 SITE_PASSWORD 改成同一个新密码\n 3. 手动 Run workflow(勾选只重新生成网页)')
+    elif cmd == 'dec':
+        if len(sys.argv) < 4:
+            sys.exit('用法: python tools/crypt.py dec data/xlsx.enc 输出.xlsx')
+        pw = getpass.getpass('请输入网页密码: ')
+        open(sys.argv[3], 'wb').write(decrypt(open(sys.argv[2], encoding='utf-8').read(), pw))
+        print('已解密保存到', sys.argv[3])
     elif cmd == 'build':
         build()
     else:

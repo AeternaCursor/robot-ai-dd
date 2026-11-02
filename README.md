@@ -68,6 +68,9 @@ Boss直聘不允许云端自动抓取，中国 43 家公司做成**在你自己�
 | 尽调网页（523 家 + 每周更新 + 招聘动态） | https://aeternacursor.github.io/robot-ai-dd/ |
 | 本使用说明 | 本仓库 README（你正在看的页面） |
 | 程序、加密数据、运行记录 | 全部在本仓库 https://github.com/AeternaCursor/robot-ai-dd |
+| 523 家公司 Excel 汇总表（加密版） | 本仓库 `data/xlsx.enc`，用网页密码可解开 |
 | 网页密码 | 只在你本人手里（GitHub 只存加密后的密钥副本） |
 
 **本机不需要保存任何文件。** 需要改密码或跑中国招聘工具时，再把仓库临时下载到电脑即可。
+
+想取回 Excel 汇总表：把仓库下载到电脑后运行 `python tools/crypt.py dec data/xlsx.enc 汇总表.xlsx`，输入网页密码即可。
