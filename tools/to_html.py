@@ -75,22 +75,70 @@ for lv, id_, ti in toc:
     else:
         nav.append(f'<li class="l2"><a href="#{id_}">{E(ti)}</a></li>')
 CSS = '''
-*{box-sizing:border-box}body{margin:0;font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:#222;background:#f6f7f9}
-header{position:sticky;top:0;z-index:5;background:#1f3b63;color:#fff;padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-header h1{font-size:16px;margin:0;flex:1 1 200px}#q{flex:1 1 220px;padding:7px 10px;border-radius:6px;border:0;font-size:15px}
-header button{padding:6px 10px;border:0;border-radius:6px;background:#3d6fb0;color:#fff;cursor:pointer}
-#wrap{display:flex}nav{width:300px;flex:none;height:calc(100vh - 50px);position:sticky;top:50px;overflow:auto;background:#fff;border-right:1px solid #ddd;font-size:13px}
-nav ul{list-style:none;margin:0;padding:6px}nav li.l1{font-weight:bold;margin-top:8px}nav li.l2{padding-left:12px}nav a{color:#1f3b63;text-decoration:none}nav a:hover{text-decoration:underline}
-main{flex:1;min-width:0;padding:12px 16px;max-width:1000px}
-details.sec{background:#fff;border-radius:8px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-details.sec>summary{cursor:pointer;padding:8px 12px;list-style:none}details.sec>summary h2{display:inline;font-size:18px;color:#1f3b63}
-.sb{padding:0 12px 10px}details.ent{border:1px solid #e3e6ea;border-radius:6px;margin:6px 0}
-details.ent>summary{cursor:pointer;padding:6px 10px;font-weight:bold;background:#f0f4fa}.eb{padding:4px 12px}
-p{margin:4px 0;word-break:break-word}p.one{background:#fff8e1;padding:4px 8px;border-left:3px solid #f0b400}p.sub{font-weight:bold;color:#1f3b63;margin-top:10px}
-p.vf{color:#2e7d32;padding-left:16px}p.note{color:#666}h3{color:#1f3b63;font-size:16px}mark{background:#ffeb3b}
-.hide{display:none!important}#cnt{font-size:13px}
-@media(max-width:800px){nav{position:fixed;left:0;top:50px;z-index:6;width:85%;display:none;box-shadow:2px 0 8px rgba(0,0,0,.3)}nav.on{display:block}main{padding:8px}}
+:root{--bg:#070b16;--panel:rgba(255,255,255,.045);--line:rgba(120,160,255,.16);--txt:#dbe4f5;--txt2:#8fa3c8;--acc:#4f8cff;--acc2:#22d3ee;--gold:#f5b544;--ok:#34d399}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);background:var(--bg);overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-40%;z-index:-2;pointer-events:none;background:
+radial-gradient(600px 400px at 15% 10%,rgba(79,140,255,.16),transparent 60%),
+radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.10),transparent 60%),
+radial-gradient(800px 600px at 50% 100%,rgba(124,58,237,.12),transparent 60%);animation:aur 26s ease-in-out infinite alternate}
+@keyframes aur{to{transform:translate(3%,-4%) scale(1.06)}}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;background:
+repeating-linear-gradient(0deg,transparent 0 39px,rgba(140,170,255,.03) 39px 40px),
+repeating-linear-gradient(90deg,transparent 0 39px,rgba(140,170,255,.03) 39px 40px)}
+header{position:sticky;top:0;z-index:9;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:rgba(10,15,30,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header h1{font-size:15px;margin:0;flex:1 1 200px;font-weight:700;letter-spacing:.3px;background:linear-gradient(90deg,#fff,#bcd4ff 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+#q{flex:1 1 220px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:var(--txt);background:rgba(255,255,255,.06);outline:none;transition:.25s}
+#q::placeholder{color:var(--txt2)}#q:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.22);background:rgba(255,255,255,.09)}
+header button{padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.05);color:var(--txt);cursor:pointer;font-size:13px;transition:.25s}
+header button:hover{background:linear-gradient(90deg,var(--acc),var(--acc2));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(79,140,255,.35)}
+#cnt{font-size:12px;color:var(--acc2);white-space:nowrap}
+#wrap{display:flex}
+nav{width:300px;flex:none;height:calc(100vh - 52px);position:sticky;top:52px;overflow:auto;background:rgba(12,18,36,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-right:1px solid var(--line);font-size:13px;padding-bottom:30px}
+nav::-webkit-scrollbar{width:8px}nav::-webkit-scrollbar-thumb{background:rgba(120,160,255,.25);border-radius:4px}
+nav ul{list-style:none;margin:0;padding:10px}
+nav li.l1{font-weight:700;margin-top:12px}nav li.l1>a{color:#e8efff;display:flex;align-items:center;gap:6px}
+nav li.l1>a::before{content:"";width:6px;height:6px;border-radius:2px;flex:none;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 8px rgba(79,140,255,.8)}
+nav li.l2{padding-left:18px}
+nav a{color:var(--txt2);text-decoration:none;display:block;padding:3px 6px;border-radius:6px;transition:.18s}
+nav a:hover{color:#fff;background:rgba(79,140,255,.14)}
+main{flex:1;min-width:0;padding:16px 20px 60px;max-width:1000px}
+details.sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:14px 0;box-shadow:0 10px 30px rgba(0,0,0,.35);overflow:hidden;transition:border-color .3s}
+details.sec:hover{border-color:rgba(120,160,255,.35)}
+details.sec>summary{cursor:pointer;padding:12px 16px;list-style:none;position:relative}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary h2{display:inline;font-size:17px;font-weight:700;letter-spacing:.3px;background:linear-gradient(90deg,#fff,#a8c6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+details.sec>summary::before{content:"▸";position:absolute;right:14px;top:11px;color:var(--acc2);transition:transform .25s}
+details.sec[open]>summary::before{transform:rotate(90deg)}
+details.sec>summary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(79,140,255,.5),transparent)}
+.sb{padding:4px 16px 14px}
+details.ent{border:1px solid transparent;border-left:2px solid rgba(120,160,255,.25);border-radius:8px;margin:6px 0;background:rgba(255,255,255,.03);transition:.22s}
+details.ent:hover{border-left-color:var(--acc2);background:rgba(79,140,255,.08);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+details.ent>summary{cursor:pointer;padding:7px 12px;font-weight:600;color:#eaf1ff;list-style:none}
+details.ent>summary::-webkit-details-marker{display:none}
+details.ent>summary::before{content:"◆";font-size:9px;color:var(--acc);margin-right:7px;vertical-align:1px}
+details.ent[open]>summary{color:var(--acc2)}
+.eb{padding:2px 14px 10px}
+p{margin:5px 0;word-break:break-word}
+p.one{background:linear-gradient(90deg,rgba(245,181,68,.14),rgba(245,181,68,.03));padding:7px 12px;border-radius:8px;border-left:3px solid var(--gold);color:#f4e9cf}
+p.sub{font-weight:700;color:#9db9ff;margin-top:12px;letter-spacing:.5px}
+p.vf{color:var(--ok);padding-left:14px}
+p.note{color:var(--txt2);font-size:13.5px}
+h3{color:#9db9ff;font-size:15.5px;font-weight:700;margin:18px 0 6px;display:flex;align-items:center;gap:8px}
+h3::before{content:"";width:18px;height:2px;flex:none;background:linear-gradient(90deg,var(--acc),transparent)}
+a{color:var(--acc2);text-decoration:none;border-bottom:1px dotted rgba(34,211,238,.5)}
+a:hover{color:#7ef0ff;border-bottom-style:solid}
+mark{background:linear-gradient(180deg,transparent 55%,rgba(255,214,64,.85) 55%);color:#fff;padding:0 1px;border-radius:2px}
+b{color:#fff}
+.hide{display:none!important}
+footer{padding:24px 16px 40px;text-align:center;color:var(--txt2);font-size:12px;letter-spacing:1px}
+@media(max-width:800px){
+nav{position:fixed;left:0;top:0;height:100vh;z-index:20;width:82%;transform:translateX(-102%);transition:transform .3s;box-shadow:8px 0 30px rgba(0,0,0,.5)}
+nav.on{transform:none}
+main{padding:10px 12px 50px}
+}
 @media(min-width:801px){#tg{display:none}}
+@media(prefers-reduced-motion:reduce){body::before{animation:none}html{scroll-behavior:auto}}
 '''
 JS = '''
 const q=document.getElementById('q'),ents=[...document.querySelectorAll('details.ent')],secs=[...document.querySelectorAll('details.sec')];
@@ -109,7 +157,9 @@ document.getElementById('ex').onclick=()=>secs.forEach(s=>s.open=!s.open);
 doc = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>机器人/具身智能/AI 公司尽调</title><style>{CSS}</style></head><body>
 <header><button id="tg">目录</button><h1>机器人/具身智能/AI 公司尽调（{ncomp} 家，更新于 {DATE}）</h1><input id="q" placeholder="搜索公司名、关键词…"><span id="cnt"></span><button id="ex">折叠/展开板块</button></header>
-<div id="wrap"><nav><ul>{''.join(nav)}</ul></nav><main>{''.join(body)}</main></div><script>{JS}</script></body></html>'''
+<div id="wrap"><nav><ul>{''.join(nav)}</ul></nav><main>{''.join(body)}</main></div>
+<footer>ROBOT / EMBODIED AI · DUE DILIGENCE · 每周自动更新 · 端到端加密</footer>
+<script>{JS}</script></body></html>'''
 open(O, 'w', encoding='utf-8').write(doc)
 print('sections', nsec, 'companies', ncomp, 'size', len(doc))
 print([ti for lv, _, ti in toc if lv == 1])

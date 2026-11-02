@@ -1,14 +1,55 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>请输入密码</title>
-<style>body{margin:0;font:16px -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#1f3b63;display:flex;align-items:center;justify-content:center;min-height:100vh}
-.box{background:#fff;border-radius:10px;padding:24px;width:90%;max-width:360px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
-h1{font-size:18px;margin:0 0 14px;color:#1f3b63}input[type=password]{width:100%;box-sizing:border-box;padding:10px;font-size:16px;border:1px solid #ccc;border-radius:6px}
-button{margin-top:12px;width:100%;padding:10px;font-size:16px;border:0;border-radius:6px;background:#3d6fb0;color:#fff;cursor:pointer}
-label{display:block;margin-top:10px;font-size:14px;color:#555}#msg{color:#c62828;font-size:14px;min-height:20px;margin-top:8px}</style></head>
-<body><form class="box" id="f"><h1>机器人/具身智能/AI 公司尽调</h1>
+<style>
+:root{--acc:#4f8cff;--acc2:#22d3ee;--txt:#dbe4f5;--txt2:#8fa3c8;--line:rgba(120,160,255,.16)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+font:16px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);
+background:#070b16;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-40%;z-index:-2;pointer-events:none;background:
+radial-gradient(600px 400px at 15% 10%,rgba(79,140,255,.18),transparent 60%),
+radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.12),transparent 60%),
+radial-gradient(800px 600px at 50% 100%,rgba(124,58,237,.14),transparent 60%);animation:aur 22s ease-in-out infinite alternate}
+@keyframes aur{to{transform:translate(3%,-4%) scale(1.07)}}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;background:
+repeating-linear-gradient(0deg,transparent 0 39px,rgba(140,170,255,.035) 39px 40px),
+repeating-linear-gradient(90deg,transparent 0 39px,rgba(140,170,255,.035) 39px 40px)}
+.box{position:relative;width:100%;max-width:380px;padding:34px 30px 30px;border-radius:18px;
+background:rgba(13,19,38,.66);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 40px rgba(79,140,255,.10);
+animation:in .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(18px) scale(.97)}}
+.box::before{content:"";position:absolute;inset:-1px;border-radius:19px;padding:1px;z-index:-1;
+background:linear-gradient(120deg,var(--acc),transparent 30%,transparent 70%,var(--acc2));
+-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+opacity:.65}
+h1{font-size:19px;margin:0 0 6px;text-align:center;font-weight:700;letter-spacing:1px;
+background:linear-gradient(90deg,#fff,#9fc3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:12px;text-align:center;color:var(--txt2);letter-spacing:2px;margin:0 0 24px}
+input[type=password]{width:100%;padding:12px 14px;font-size:16px;border-radius:10px;color:var(--txt);
+border:1px solid var(--line);background:rgba(255,255,255,.06);outline:none;transition:.25s}
+input[type=password]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.25);background:rgba(255,255,255,.09)}
+button{margin-top:14px;width:100%;padding:12px;font-size:16px;font-weight:600;letter-spacing:4px;color:#fff;
+border:0;border-radius:10px;cursor:pointer;transition:.25s;
+background:linear-gradient(90deg,var(--acc),var(--acc2));box-shadow:0 8px 24px rgba(79,140,255,.35)}
+button:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(79,140,255,.5)}
+button:active{transform:none}
+label{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13.5px;color:var(--txt2);cursor:pointer;user-select:none}
+label input{accent-color:var(--acc)}
+#msg{color:#ff7d90;font-size:14px;min-height:20px;margin-top:10px;text-align:center;letter-spacing:1px}
+.box.err{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.foot{margin-top:18px;text-align:center;font-size:11px;color:var(--txt2);letter-spacing:1px;opacity:.7}
+@media(prefers-reduced-motion:reduce){body::before,.box,button{animation:none!important;transition:none}}
+</style></head>
+<body><form class="box" id="f">
+<h1>机器人 / 具身智能 / AI 公司尽调</h1>
+<p class="sub">DUE DILIGENCE · ENCRYPTED</p>
 <input type="password" id="pw" placeholder="请输入密码" autocomplete="current-password" autofocus>
 <label><input type="checkbox" id="rm"> 在这台设备上记住密码</label>
-<button type="submit">打开</button><div id="msg"></div></form>
+<button type="submit">打开</button><div id="msg"></div>
+<p class="foot">523 家公司 · 每周自动更新 · AES-256 端到端加密</p>
+</form>
 <script id="blob" type="application/json">__BLOB__</script>
 <script>
 const D=JSON.parse(document.getElementById('blob').textContent),u=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
@@ -20,7 +61,7 @@ async function open_(pw){
   document.open();document.write(h);document.close();
 }
 const m=document.getElementById('msg');
-document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在解密…';
-  try{if(document.getElementById('rm').checked)localStorage.setItem('ddpw',pw);await open_(pw)}catch(x){m.textContent='密码不对，请重试';localStorage.removeItem('ddpw')}};
+document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在解密…';m.style.color='#8fa3c8';
+  try{if(document.getElementById('rm').checked)localStorage.setItem('ddpw',pw);await open_(pw)}catch(x){m.style.color='';m.textContent='密码不对，请重试';document.getElementById('f').classList.add('err');setTimeout(()=>document.getElementById('f').classList.remove('err'),450);localStorage.removeItem('ddpw')}};
 const s=localStorage.getItem('ddpw');if(s)open_(s).catch(()=>{localStorage.removeItem('ddpw');m.textContent='保存的密码已失效，请重新输入'});
 </script></body></html>
