@@ -103,15 +103,31 @@ body{margin:0;font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:#0f0c08}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold),#8a6a35);border-radius:5px;box-shadow:0 0 10px rgba(216,181,113,.4)}
 body::before{content:"";position:fixed;inset:-40%;z-index:-2;pointer-events:none;background:
-radial-gradient(700px 500px at 12% 8%,rgba(216,181,113,.14),transparent 60%),
-radial-gradient(800px 600px at 88% 18%,rgba(200,69,44,.09),transparent 60%),
-radial-gradient(900px 700px at 50% 105%,rgba(90,60,30,.22),transparent 60%);animation:aur 24s ease-in-out infinite alternate}
+radial-gradient(700px 500px at 12% 8%,rgba(216,181,113,.15),transparent 60%),
+radial-gradient(800px 600px at 88% 18%,rgba(200,69,44,.10),transparent 60%),
+radial-gradient(900px 700px at 50% 108%,rgba(120,84,40,.30),transparent 62%),
+radial-gradient(700px 500px at 8% 88%,rgba(200,69,44,.07),transparent 60%);animation:aur 24s ease-in-out infinite alternate}
 @keyframes aur{to{transform:translate(3%,-4%) scale(1.07)}}
 body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;background:
 repeating-linear-gradient(0deg,transparent 0 3px,rgba(216,181,113,.012) 3px 4px),
 repeating-linear-gradient(90deg,transparent 0 79px,rgba(216,181,113,.02) 79px 80px);
 -webkit-mask:radial-gradient(130% 100% at 50% 0%,#000 40%,transparent 100%)}
 #fx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+#moon{position:fixed;top:84px;right:9%;width:120px;height:120px;border-radius:50%;z-index:-1;pointer-events:none;
+background:radial-gradient(circle at 38% 34%,#f8f1de,#eadfbe 52%,#c9b483 100%);
+box-shadow:0 0 60px rgba(240,233,216,.30),0 0 130px rgba(216,181,113,.18);
+opacity:.8;animation:breath 11s ease-in-out infinite}
+#moon::after{content:"";position:absolute;left:14%;top:52%;width:26%;height:20%;border-radius:50%;background:rgba(180,158,116,.35);filter:blur(3px);
+box-shadow:34px -26px 0 -6px rgba(180,158,116,.28),-22px -38px 0 -10px rgba(180,158,116,.22)}
+@keyframes breath{50%{box-shadow:0 0 90px rgba(240,233,216,.42),0 0 170px rgba(216,181,113,.26)}}
+.mist{position:fixed;height:110px;width:430px;border-radius:50%;filter:blur(46px);z-index:-1;pointer-events:none;
+background:rgba(216,181,113,.055);animation:drift linear infinite}
+.m1{top:26%;animation-duration:75s}
+.m2{top:52%;width:560px;height:130px;background:rgba(200,69,44,.04);animation-duration:105s;animation-delay:-40s}
+.m3{top:12%;width:360px;background:rgba(240,233,216,.05);animation-duration:90s;animation-delay:-70s}
+@keyframes drift{from{transform:translateX(-35vw)}to{transform:translateX(135vw)}}
+#mt{position:fixed;left:0;right:0;bottom:0;height:32vh;z-index:-1;pointer-events:none;opacity:.95}
+#mt svg{width:100%;height:100%;display:block}
 #scan{position:fixed;left:0;right:0;top:-30%;height:26%;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.22;
 background:linear-gradient(180deg,transparent,rgba(240,217,168,.06) 45%,rgba(240,217,168,.14) 50%,rgba(240,217,168,.06) 55%,transparent);
 animation:scan 11s linear infinite}
@@ -231,6 +247,8 @@ main{padding:10px 12px 50px}
 .live{display:none}
 #hero{padding:32px 12px 6px}#hero .ht{font-size:23px;letter-spacing:3px}.st{min-width:86px;padding:10px 14px}.st b{font-size:18px}
 .vtext,.seal{display:none}
+#moon{width:80px;height:80px;top:70px;right:6%}
+#mt{height:20vh}
 .sb.grid{grid-template-columns:1fr;padding:6px 12px 14px}
 }
 @media(min-width:801px){#tg{display:none}}
@@ -268,13 +286,20 @@ x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}
 requestAnimationFrame(tick)})()})()}
 '''
 doc = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>机器人/具身智能/AI 公司尽调</title><style>{CSS}</style></head><body>
-<header><button id="tg">目录</button><span class="live"><i></i>LIVE</span><h1>机器人/具身智能/AI 公司尽调（{ncomp} 家，更新于 {DATE}）</h1><input id="q" placeholder="搜索公司名、关键词…"><span id="cnt"></span><button id="ex">折叠/展开板块</button></header>
+<title>机器人 · 具身智能 · 公司尽调</title><style>{CSS}</style></head><body>
+<header><button id="tg">目录</button><span class="live"><i></i>LIVE</span><h1>机器人 · 具身智能 · 公司尽调（{ncomp} 家，更新于 {DATE}）</h1><input id="q" placeholder="搜索公司名、关键词…"><span id="cnt"></span><button id="ex">折叠/展开板块</button></header>
 <canvas id="fx"></canvas><div id="scan"></div>
+<div id="moon"></div>
+<div class="mist m1"></div><div class="mist m2"></div><div class="mist m3"></div>
+<div id="mt"><svg viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+<path fill="#171208" stroke="rgba(216,181,113,.16)" stroke-width="1" d="M0,225 L110,150 L235,215 L375,120 L520,205 L685,140 L845,210 L1005,130 L1165,200 L1305,155 L1440,215 L1440,320 L0,320 Z"/>
+<path fill="#20180d" stroke="rgba(216,181,113,.10)" stroke-width="1" d="M0,262 L155,195 L305,252 L475,168 L645,248 L825,182 L1005,252 L1165,190 L1325,242 L1440,205 L1440,320 L0,320 Z"/>
+<path fill="#29200f" d="M0,292 L185,245 L365,286 L565,226 L765,282 L965,235 L1165,287 L1335,252 L1440,278 L1440,320 L0,320 Z"/>
+</svg></div>
 <div id="wrap"><nav><ul>{''.join(nav)}</ul></nav><main>
 <div id="hero">
 <span class="vtext l">格物致知</span><span class="vtext r">明察秋毫</span><span class="seal">尽调</span>
-<div class="ht">机器人 · 具身智能 · AI 公司尽调</div>
+<div class="ht">机器人 · 具身智能 · 公司尽调</div>
 <div class="hd">「 <em>知己知彼，百战不殆</em> 」 —— 《孙子·谋攻》</div>
 <div class="stats">
 <div class="st"><b>{ncomp}</b><span>家公司</span></div>

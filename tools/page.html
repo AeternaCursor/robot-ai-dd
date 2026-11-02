@@ -17,6 +17,15 @@ body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opa
 repeating-linear-gradient(0deg,transparent 0 3px,rgba(216,181,113,.012) 3px 4px),
 repeating-linear-gradient(90deg,transparent 0 79px,rgba(216,181,113,.02) 79px 80px)}
 #fx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+#moon{position:fixed;top:9%;right:11%;width:130px;height:130px;border-radius:50%;z-index:-1;pointer-events:none;
+background:radial-gradient(circle at 38% 34%,#f8f1de,#eadfbe 52%,#c9b483 100%);
+box-shadow:0 0 70px rgba(240,233,216,.32),0 0 150px rgba(216,181,113,.20);
+opacity:.85;animation:breath 11s ease-in-out infinite}
+#moon::after{content:"";position:absolute;left:14%;top:52%;width:26%;height:20%;border-radius:50%;background:rgba(180,158,116,.35);filter:blur(3px);
+box-shadow:34px -26px 0 -6px rgba(180,158,116,.28),-22px -38px 0 -10px rgba(180,158,116,.22)}
+@keyframes breath{50%{box-shadow:0 0 100px rgba(240,233,216,.45),0 0 190px rgba(216,181,113,.28)}}
+#mt{position:fixed;left:0;right:0;bottom:0;height:36vh;z-index:-1;pointer-events:none}
+#mt svg{width:100%;height:100%;display:block}
 .ring{position:fixed;left:50%;top:50%;border-radius:50%;pointer-events:none;z-index:-1}
 .r1{width:560px;height:560px;margin:-280px 0 0 -280px;border:1px dashed rgba(216,181,113,.25);animation:spin 40s linear infinite}
 .r2{width:760px;height:760px;margin:-380px 0 0 -380px;border:1px solid rgba(200,69,44,.12);animation:spin 70s linear infinite reverse}
@@ -64,9 +73,15 @@ label input{accent-color:var(--gold)}
 </style></head>
 <body>
 <canvas id="fx"></canvas><div class="ring r1"></div><div class="ring r2"></div>
+<div id="moon"></div>
+<div id="mt"><svg viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+<path fill="#171208" stroke="rgba(216,181,113,.16)" stroke-width="1" d="M0,225 L110,150 L235,215 L375,120 L520,205 L685,140 L845,210 L1005,130 L1165,200 L1305,155 L1440,215 L1440,320 L0,320 Z"/>
+<path fill="#20180d" stroke="rgba(216,181,113,.10)" stroke-width="1" d="M0,262 L155,195 L305,252 L475,168 L645,248 L825,182 L1005,252 L1165,190 L1325,242 L1440,205 L1440,320 L0,320 Z"/>
+<path fill="#29200f" d="M0,292 L185,245 L365,286 L565,226 L765,282 L965,235 L1165,287 L1335,252 L1440,278 L1440,320 L0,320 Z"/>
+</svg></div>
 <form class="box" id="f">
 <span class="seal">尽调</span>
-<h1>机器人 · 具身智能 · AI 尽调卷宗</h1>
+<h1>机器人 · 具身智能 · 尽调卷宗</h1>
 <p class="sub">「 <em>知己知彼，百战不殆</em> 」 —— 《孙子·谋攻》</p>
 <input type="password" id="pw" placeholder="请输入密码" autocomplete="current-password" autofocus>
 <label><input type="checkbox" id="rm"> 在这台设备上记住密码</label>
