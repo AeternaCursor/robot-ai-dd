@@ -1,5 +1,7 @@
-"""每周更新: 抓重点公司和待核实条目相关公司的新闻(Google News RSS), 用 GitHub Models 判断是否有重要变化,
-结果写入文档末尾的“本周更新记录”。不改动正文结论。需要环境变量 SITE_PASSWORD 和 GITHUB_TOKEN。"""
+"""每周更新: 抓重点公司和待核实条目相关公司的新闻(Google News RSS),
+用关键词筛出重要变化(融资、估值、上市、营收、并购、量产、诉讼、高管变动等),
+新闻标题原样引用并附来源链接, 写入文档末尾的"本周更新记录"。不改动正文结论。
+需要环境变量 SITE_PASSWORD。"""
 import datetime, email.utils, hashlib, json, os, re, sys, time, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -7,12 +9,25 @@ import crypt
 
 ROOT = crypt.ROOT
 SEEN = os.path.join(ROOT, 'data', 'seen.json')
-API = 'https://models.github.ai/inference/chat/completions'
-MODEL = os.environ.get('MODEL', 'openai/gpt-4o-mini')
 LOG_TITLE = '本周更新记录（每周一自动生成）'
 CJK = re.compile(r'[\u4e00-\u9fff]')
 NOW = datetime.datetime.now(datetime.timezone.utc)
 TODAY = (NOW + datetime.timedelta(hours=8)).date().isoformat()
+
+# 重要变化关键词(中英文)。命中的新闻标题才会收录, 标题原样引用不改动。
+KEY = re.compile('|'.join([
+    '融资', '募资', '估值', '上市', 'IPO', '递表', '招股', '退市', '停牌',
+    '收购', '并购', '入股', '增资', '战略投资',
+    '裁员', '破产', '清算', '倒闭', '重组',
+    '营收', '净利', '利润', '财报', '季报', '年报', '亏损', '扭亏',
+    '量产', '投产', '交付', '出货', '订单', '中标',
+    '诉讼', '仲裁', '罚款', '处罚', '制裁', '禁令', '调查', '召回',
+    '高管', 'CEO', 'CTO', '总裁', '辞任', '离职', '任命',
+    r'raises', r'funding', r'series [a-z]', r'valuation', r'\bIPO\b', r'acquir',
+    r'merger', r'acquisition', r'layoff', r'bankrupt', r'revenue', r'profit',
+    r'lawsuit', r'\bfines?\b', r'investigat', r'recall', r'ships\b', r'deliver',
+    r'\bCEO\b', r'resign',
+]), re.I)
 
 
 def query_name(n):
@@ -75,84 +90,31 @@ def news(q):
     return out[:10]
 
 
-def ask(batch):
-    sys_p = ('你是尽调助理。只根据给出的新闻标题判断公司是否出现重要变化：融资、估值、上市/退市、营收利润、并购、裁员、诉讼处罚、'
-             '重大客户或产品量产、高管变动，或能解答“待核实”条目的信息。严禁编造标题里没有的信息，数字必须原样来自标题。'
-             '与公司无关、同名混淆、普通营销稿一律不选。只输出JSON：{"items":[{"company":"公司名","summary":"一句中文结论","news":[新闻编号],"resolves":"可解答的待核实条目编号或空"}]}，没有重要变化的公司不要列出。')
-    user = []
-    for c in batch:
-        user.append(f"## {c['name']}\n背景：{' | '.join(c['info'])[:400]}\n" +
-                    '\n'.join(f"[{i}] {n['date']} {n['src']}：{n['title']}" for i, n in enumerate(c['news'])))
-    body = json.dumps({'model': MODEL, 'temperature': 0, 'response_format': {'type': 'json_object'},
-                       'messages': [{'role': 'system', 'content': sys_p}, {'role': 'user', 'content': '\n\n'.join(user)}]}).encode()
-    for n in range(3):
-        raw = b''
-        try:
-            r = urllib.request.urlopen(urllib.request.Request(API, body, {
-                'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Content-Type': 'application/json'}), timeout=120)
-            raw = r.read()
-            content = json.loads(raw)['choices'][0]['message']['content']
-            content = re.sub(r'^```(json)?\s*|\s*```$', '', content.strip())
-            return json.loads(content).get('items', [])
-        except Exception as e:
-            detail = e.read()[:300] if hasattr(e, 'read') else raw[:300]
-            print('AI调用失败, 稍后重试', e, detail)
-            if getattr(e, 'code', 0) in (401, 403):
-                return None
-            time.sleep(20 * (n + 1))
-    return None
-
-
 def main():
     text = crypt.load_txt()
     L = text.split('\n')
     seen = set(json.load(open(SEEN))) if os.path.exists(SEEN) else set()
     h = lambda s: hashlib.sha1(s.encode()).hexdigest()[:16]
-    cands = []
+    lines = []
     t0 = time.time()
     T = targets(L)
     for n_, (q, c) in enumerate(T.items(), 1):
-        ns = [n for n in news(q) if h(n['link']) not in seen]
-        if ns:
-            c['news'] = ns
-            cands.append(c)
+        ns = [x for x in news(q) if h(x['link']) not in seen]
+        hit = [x for x in ns if KEY.search(x['title'])][:3]
+        if hit:
+            pend = sorted(set(re.findall(r'待核实第(\d+)条', ' '.join(c['info']))), key=int)
+            tag = f"（可能涉及待核实第{'、'.join(pend)}条）" if pend else ''
+            for x in hit:
+                lines.append(f"- {c['name']}：{x['title']}{tag}（来源：{x['src']} {x['date']} {x['link']}）")
+            seen.update(h(x['link']) for x in ns)
         if n_ % 20 == 0:
-            print(f'新闻 {n_}/{len(T)} 用时{int(time.time() - t0)}秒')
+            print(f'新闻 {n_}/{len(T)} 用时{int(time.time() - t0)}秒 已命中{len(lines)}条')
         if time.time() - t0 > 600:
             print('抓新闻超过10分钟, 剩余公司下周再查')
             break
-    print('目标公司有新新闻:', len(cands))
-    lines, failed = [], []
-    bad = 0
-    for i in range(0, len(cands), 6):
-        batch = cands[i:i + 6]
-        if bad >= 2 or time.time() - t0 > 1500:
-            failed += [c['name'] for c in batch]
-            continue
-        res = ask(batch)
-        bad = bad + 1 if res is None else 0
-        print(f'AI判断 {i + len(batch)}/{len(cands)}', '失败' if res is None else f'{len(res)}条')
-        time.sleep(5)
-        if res is None:
-            failed += [c['name'] for c in batch]
-            continue
-        by = {c['name']: c for c in batch}
-        for r in res:
-            c = by.get(r.get('company')) or next((v for k, v in by.items() if r.get('company', '') in k or k in r.get('company', '')), None)
-            if not c:
-                continue
-            refs = [c['news'][j] for j in r.get('news', []) if isinstance(j, int) and 0 <= j < len(c['news'])]
-            if not refs:
-                continue
-            src = '；'.join(f"{n['src']} {n['date']} {n['link']}" for n in refs[:3])
-            tag = f"（可能涉及待核实第{r['resolves']}条）" if r.get('resolves') else ''
-            lines.append(f"- {c['name']}：{r.get('summary', '').strip()}{tag}（来源：{src}）")
-        for c in batch:
-            seen.update(h(n['link']) for n in c['news'])
+    print('写入', len(lines), '条更新')
     block = [f'—— {TODAY} 更新 ——']
     block += lines or ['- 本周重点公司未发现融资、上市、营收、估值等重要变化。']
-    if failed:
-        block.append('- 以下公司本周 AI 判断失败，下周重试：' + '、'.join(failed))
     block.append('')
     if not any(l.startswith(LOG_TITLE) for l in L):
         L += ['', '#' * 80, LOG_TITLE,
@@ -160,7 +122,7 @@ def main():
     if block[0] in L:  # 同一天重跑: 先删掉当天旧记录
         s = L.index(block[0])
         e = s + 1
-        while e < len(L) and not L[e].startswith('—— '):
+        while e < len(L) and not L[e].startswith('—— ') and set(L[e].strip() or 'x') != {'#'}:
             e += 1
         del L[s - 1 if L[s - 1] == '' else s:e]
     k = next(k for k, l in enumerate(L) if l.startswith(LOG_TITLE))
@@ -169,7 +131,6 @@ def main():
     L[k + 1:k + 1] = [''] + block
     crypt.save_txt('\n'.join(L))
     json.dump(sorted(seen), open(SEEN, 'w'))
-    print('写入', len(lines), '条更新')
 
 
 if __name__ == '__main__':
