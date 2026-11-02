@@ -19,7 +19,11 @@ def open_sec(title):
     close_sec(); nsec += 1
     sid = f's{nsec}'
     toc.append((1, sid, title))
-    body.append(f'<details class="sec" id="{sid}" open><summary><span class="sn">S{nsec:02d}</span><h2>{E(title)}</h2></summary><div class="sb">')
+    cls = 'sec'
+    if title.startswith('本周更新记录') or title.startswith('招聘动态'):
+        cls += ' auto'
+    grid = ' grid' if (title.startswith('板块') or title.startswith('第二部分')) else ''
+    body.append(f'<details class="{cls}" id="{sid}"><summary><span class="sn">S{nsec:02d}</span><h2>{E(title)}</h2></summary><div class="sb{grid}">')
     sec_open = True
 i = 0
 while i < len(L):
@@ -74,6 +78,12 @@ for lv, id_, ti in toc:
         nav.append(f'<li class="l1"><a href="#{id_}">{E(ti)}</a></li>')
     else:
         nav.append(f'<li class="l2"><a href="#{id_}">{E(ti)}</a></li>')
+def sid_of(pre):
+    return next((i for _, i, t in toc if t.startswith(pre)), '')
+QUICK = [('公司速览', '各板块重点公司速览'), ('中国人形机器人', '板块一'), ('海外人形机器人', '板块二'),
+         ('工业/自动驾驶', '板块三'), ('大模型', '板块四'), ('AI芯片算力', '板块五'), ('中国供应链', '板块六'),
+         ('本周更新', '本周更新记录'), ('招聘动态', '招聘动态')]
+chips = ''.join(f'<a class="chip" href="#{sid_of(p)}">{n}</a>' for n, p in QUICK if sid_of(p))
 CSS = '''
 @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
 :root{--bg:#050912;--panel:rgba(13,22,44,.55);--line:rgba(96,150,255,.22);--txt:#d8e4fb;--txt2:#7e93bd;--acc:#4f8cff;--acc2:#29e6ff;--gold:#f5b544;--ok:#34d399}
@@ -167,11 +177,42 @@ b{color:#fff}
 .hide{display:none!important}
 footer{padding:28px 16px 44px;text-align:center;color:var(--txt2);font:11px/2 ui-monospace,Consolas,monospace;letter-spacing:3px}
 footer::after{content:"▌";color:var(--acc2);animation:pulse 1s infinite;margin-left:4px}
+#hero{padding:52px 20px 10px;text-align:center}
+#hero .ht{font-size:30px;font-weight:800;letter-spacing:2px;line-height:1.35;
+background:linear-gradient(100deg,#fff 10%,#8fc2ff 45%,#29e6ff 90%);-webkit-background-clip:text;background-clip:text;color:transparent;
+filter:drop-shadow(0 0 20px rgba(41,230,255,.35))}
+#hero .hd{font:600 10px/1 ui-monospace,Consolas,monospace;letter-spacing:6px;color:var(--txt2);margin:14px 0 26px}
+.stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:26px}
+.st{display:flex;flex-direction:column;gap:4px;padding:12px 22px;border-radius:12px;min-width:104px;
+background:var(--panel);border:1px solid var(--line);box-shadow:0 10px 26px rgba(0,0,0,.35),inset 0 0 18px rgba(41,230,255,.04)}
+.st b{font-size:22px;color:#fff;text-shadow:0 0 14px rgba(41,230,255,.55);font-variant-numeric:tabular-nums}
+.st span{font-size:11.5px;color:var(--txt2);letter-spacing:2px}
+.chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;padding-bottom:8px}
+a.chip{padding:8px 16px;border:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;border-radius:999px;
+font-size:13px;color:var(--txt);background:rgba(255,255,255,.05);transition:.22s;text-shadow:none}
+a.chip:hover{color:#fff;background:linear-gradient(90deg,var(--acc),var(--acc2));border-color:transparent!important;
+box-shadow:0 0 22px rgba(41,230,255,.5);transform:translateY(-2px)}
+#hint{text-align:center;font:600 10px/1 ui-monospace,Consolas,monospace;color:var(--txt2);letter-spacing:3px;margin:6px 0 2px;animation:pulse 3s infinite}
+.sb.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:8px;padding:6px 18px 16px}
+.sb.grid>p,.sb.grid>h3{grid-column:1/-1}
+.sb.grid details.ent{margin:0}
+details.sec.auto>summary h2{background:linear-gradient(90deg,#fff,#29e6ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+details.sec.auto>summary .sn{border-color:rgba(41,230,255,.7);animation:pulse 2s infinite}
+details.sec.auto::before{background:linear-gradient(135deg,rgba(41,230,255,.5),rgba(79,140,255,.12) 35%,rgba(41,230,255,.35))}
+details.sec.auto .sb p{border-left:2px solid rgba(41,230,255,.4);background:rgba(10,20,40,.5);padding:7px 12px;border-radius:8px;margin:7px 0}
+#top{position:fixed;right:18px;bottom:18px;z-index:15;width:46px;height:46px;border-radius:50%;cursor:pointer;
+border:1px solid var(--line);background:rgba(9,15,32,.8);color:var(--acc2);font-size:17px;
+backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.5),0 0 16px rgba(41,230,255,.15);
+opacity:0;pointer-events:none;transition:.3s}
+#top.on{opacity:1;pointer-events:auto}
+#top:hover{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 0 26px rgba(41,230,255,.6)}
 @media(max-width:800px){
 nav{position:fixed;left:0;top:0;height:100vh;z-index:20;width:82%;transform:translateX(-103%);transition:transform .3s;box-shadow:10px 0 40px rgba(0,0,0,.6)}
 nav.on{transform:none}
 main{padding:10px 12px 50px}
 .live{display:none}
+#hero{padding:30px 12px 6px}#hero .ht{font-size:21px}.st{min-width:86px;padding:10px 14px}.st b{font-size:18px}
+.sb.grid{grid-template-columns:1fr;padding:6px 12px 14px}
 }
 @media(min-width:801px){#tg{display:none}}
 @media(prefers-reduced-motion:reduce){#scan{display:none}body::before{animation:none}html{scroll-behavior:auto}*{animation:none!important}}
@@ -186,9 +227,11 @@ ents.forEach(e=>{const hit=e.textContent.toLowerCase().includes(k);e.classList.t
 secs.forEach(s=>{const hasE=s.querySelector('details.ent:not(.hide)');const self=s.textContent.toLowerCase().includes(k);s.classList.toggle('hide',!self);if(self)s.open=true});
 document.getElementById('cnt').textContent='匹配公司 '+n+' 家';}
 function go(id){const el=document.getElementById(id);if(!el)return;let p=el;while(p){if(p.tagName==='DETAILS'){p.open=true;p.classList.remove('hide')}p=p.parentElement}el.scrollIntoView();}
-document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',ev=>{ev.preventDefault();go(a.getAttribute('href').slice(1));document.querySelector('nav').classList.remove('on')}));
+document.querySelectorAll('nav a, a.chip').forEach(a=>a.addEventListener('click',ev=>{ev.preventDefault();go(a.getAttribute('href').slice(1));document.querySelector('nav').classList.remove('on')}));
 document.getElementById('tg').onclick=()=>document.querySelector('nav').classList.toggle('on');
 document.getElementById('ex').onclick=()=>secs.forEach(s=>s.open=!s.open);
+const tb=document.getElementById('top');addEventListener('scroll',()=>tb.classList.toggle('on',scrollY>500),{passive:true});
+tb.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 ;
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){(function(){
 const c=document.getElementById('fx');if(!c)return;const x=c.getContext('2d');let w,h,P=[];
@@ -208,7 +251,20 @@ doc = f'''<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta na
 <title>机器人/具身智能/AI 公司尽调</title><style>{CSS}</style></head><body>
 <header><button id="tg">目录</button><span class="live"><i></i>LIVE</span><h1>机器人/具身智能/AI 公司尽调（{ncomp} 家，更新于 {DATE}）</h1><input id="q" placeholder="搜索公司名、关键词…"><span id="cnt"></span><button id="ex">折叠/展开板块</button></header>
 <canvas id="fx"></canvas><div id="scan"></div>
-<div id="wrap"><nav><ul>{''.join(nav)}</ul></nav><main>{''.join(body)}</main></div>
+<div id="wrap"><nav><ul>{''.join(nav)}</ul></nav><main>
+<div id="hero"><div class="ht">机器人 / 具身智能 / AI 公司尽调</div>
+<div class="hd">EMBODIED INTELLIGENCE · DUE DILIGENCE DATABASE</div>
+<div class="stats">
+<div class="st"><b>{ncomp}</b><span>家公司</span></div>
+<div class="st"><b>{nsec}</b><span>个板块</span></div>
+<div class="st"><b>{DATE[5:]}</b><span>最近更新</span></div>
+<div class="st"><b>WEEKLY</b><span>每周自动刷新</span></div>
+</div>
+<div class="chips">{chips}</div>
+<div id="hint">TAP SECTION TO EXPAND · 点击下方板块展开内容</div>
+</div>
+{''.join(body)}</main></div>
+<button id="top" title="回到顶部">▲</button>
 <footer>ROBOT / EMBODIED AI · DUE DILIGENCE · 每周自动更新 · 端到端加密</footer>
 <script>{JS}</script></body></html>'''
 open(O, 'w', encoding='utf-8').write(doc)
