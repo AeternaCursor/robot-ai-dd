@@ -49,9 +49,44 @@
 3. 把新加密数据 `data/dd.txt.enc` 提交回仓库（或找 AI 助手帮忙）
 4. 到 Settings → Secrets → Actions 把 `SITE_PASSWORD` 改成同一个新密码，再手动 Run workflow（勾选只重新生成网页）
 
-### 4. 中国公司招聘动态（可选功能）
+### 4. 中国公司招聘动态（Boss直聘，手动可选）
 
-Boss直聘不允许云端自动抓取，中国 43 家公司做成**在你自己电脑上手动跑**的工具（本仓库 `tools/jobs_cn.py`）。平时不用管；想用的时候需要把仓库下载到电脑、安装 Python + playwright，运行后扫码登录。属于进阶操作，建议需要时找 AI 助手协助。每周最多跑一次，防账号被限制。
+工具在仓库 `tools/jobs_cn.py`，本机平时不保留。想跑时按下面步骤（也可直接让 AI 助手代跑）：
+
+**第一步：把仓库下载回电脑**（PowerShell 里逐行运行）
+```powershell
+cd d:\Jump
+git -c http.proxy=http://127.0.0.1:7897 -c http.sslBackend=openssl clone https://github.com/AeternaCursor/robot-ai-dd.git
+cd robot-ai-dd
+git config http.proxy http://127.0.0.1:7897
+git config http.sslBackend openssl
+```
+
+**第二步：首次需要装依赖**（只装一次，以后跳过）
+```powershell
+pip install playwright
+playwright install chromium
+```
+
+**第三步：运行工具**（把 密码 换成你的网页密码）
+```powershell
+$env:SITE_PASSWORD='你的网页密码'
+python tools\jobs_cn.py              # 全部 43 家，约 10 分钟
+python tools\jobs_cn.py 宇树科技      # 只跑某一家
+```
+
+**第四步：扫码登录（关键！）**
+运行后会**自动弹出一个浏览器窗口**，显示 Boss直聘 登录页：
+1. 手机打开 Boss直聘 App → 右上角 ➕ → 扫一扫 → 扫屏幕上的二维码 → 手机上点确认
+2. **不要关闭那个浏览器窗口**，程序在它里面工作
+3. 登录成功会记住，以后再跑不用重新扫
+
+**第五步：等它跑完**
+- 每家间隔几秒，会打印进度；结束后自动上传
+- 然后到 Actions 页面点 Run workflow（勾选"只重新生成网页"），几分钟后网页的"招聘动态"就能看到
+- 搜索页可能弹滑块验证，用鼠标拖一下即可
+
+**注意**：每周最多跑一次（防账号被限制）；搜索结果可能含同名公司，仅供参考。用完后可把 `robot-ai-dd` 文件夹删掉，保持本机干净。
 
 ## 五、安全说明
 
