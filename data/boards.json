@@ -30,5 +30,11 @@
   {"name": "Decagon", "ats": "ashby", "board": "decagon"},
   {"name": "OpenEvidence", "ats": "ashby", "board": "openevidence"},
   {"name": "Mercor", "ats": "ashby", "board": "mercor"},
-  {"name": "Gamma", "ats": "ashby", "board": "gamma"}
+  {"name": "Gamma", "ats": "ashby", "board": "gamma"},
+  {"name": "Cerebras Systems", "ats": "ashby", "board": "cerebras"},
+  {"name": "Lambda", "ats": "ashby", "board": "lambda"},
+  {"name": "Etched", "ats": "ashby", "board": "etched"},
+  {"name": "d-Matrix", "ats": "ashby", "board": "d-matrix"},
+  {"name": "Shield AI", "ats": "ashby", "board": "shieldai"},
+  {"name": "Wayve", "ats": "ashby", "board": "wayve"}
 ]

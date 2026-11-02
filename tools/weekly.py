@@ -23,10 +23,11 @@ KEY = re.compile('|'.join([
     '量产', '投产', '交付', '出货', '订单', '中标',
     '诉讼', '仲裁', '罚款', '处罚', '制裁', '禁令', '调查', '召回',
     '高管', 'CEO', 'CTO', '总裁', '辞任', '离职', '任命',
+    '招聘', '扩招', '校招', '社招', '内推', '秋招', '春招',
     r'raises', r'funding', r'series [a-z]', r'valuation', r'\bIPO\b', r'acquir',
     r'merger', r'acquisition', r'layoff', r'bankrupt', r'revenue', r'profit',
     r'lawsuit', r'\bfines?\b', r'investigat', r'recall', r'ships\b', r'deliver',
-    r'\bCEO\b', r'resign',
+    r'\bCEO\b', r'resign', r'hiring',
 ]), re.I)
 
 
@@ -119,12 +120,18 @@ def main():
     if not any(l.startswith(LOG_TITLE) for l in L):
         L += ['', '#' * 80, LOG_TITLE,
               '说明：由程序根据新闻标题自动筛选，未改动正文结论；请点开来源链接核对后再引用。', '#' * 80, '']
-    if block[0] in L:  # 同一天重跑: 先删掉当天旧记录
+    if block[0] in L:  # 同一天重跑: 与当天旧记录合并, 不丢内容
         s = L.index(block[0])
         e = s + 1
         while e < len(L) and not L[e].startswith('—— ') and set(L[e].strip() or 'x') != {'#'}:
             e += 1
-        del L[s - 1 if L[s - 1] == '' else s:e]
+        old = [x for x in L[s + 1:e] if x.startswith('- ') and '未发现' not in x]
+        fresh = [x for x in lines if x not in old]
+        if not fresh:
+            print('同日重跑无新内容, 保持原记录')
+            return
+        block = [block[0]] + old + fresh + ['']
+        del L[s:e]
     k = next(k for k, l in enumerate(L) if l.startswith(LOG_TITLE))
     while not set(L[k].strip() or 'x') == {'#'}:
         k += 1
