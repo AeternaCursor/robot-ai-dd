@@ -2,72 +2,71 @@
 <meta name="robots" content="noindex,nofollow"><title>尽调卷宗 · 请入印</title>
 <style>
 @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
-:root{--gold:#d8b571;--gold2:#f0d9a8;--cn:#c8452c;--cn2:#e0664a;--txt:#e9e2d0;--txt2:#a3967c;--line:rgba(216,181,113,.22)}
+:root{--ink:#3a352c;--ink2:#6b5c3f;--txt:#37322a;--txt2:#837b6a;--line:rgba(96,86,64,.30);--cn:#b8442c;--cn2:#cf5a3e;--gold:#a8834a}
 *{box-sizing:border-box}
-html{background:#0d0b08}
+html{background:#e9e2cd}
 body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
 font:16px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);overflow:hidden}
-.kai,h1,.sub,.stat{font-family:"KaiTi","STKaiti","Kaiti SC","FangSong",serif}
+.kai,h1,.sub,.stat,button,input{font-family:"KaiTi","STKaiti","Kaiti SC","FangSong",serif}
 body::before{content:"";position:fixed;inset:-40%;z-index:-3;pointer-events:none;background:
-radial-gradient(700px 500px at 15% 10%,rgba(216,181,113,.16),transparent 60%),
-radial-gradient(800px 600px at 85% 20%,rgba(200,69,44,.10),transparent 60%),
-radial-gradient(900px 700px at 50% 105%,rgba(90,60,30,.24),transparent 60%);animation:aur 20s ease-in-out infinite alternate}
+radial-gradient(700px 500px at 15% 8%,rgba(74,66,50,.11),transparent 60%),
+radial-gradient(800px 600px at 85% 20%,rgba(184,68,44,.05),transparent 60%),
+radial-gradient(900px 700px at 50% 105%,rgba(74,66,50,.14),transparent 60%);animation:aur 20s ease-in-out infinite alternate}
 @keyframes aur{to{transform:translate(3%,-4%) scale(1.07)}}
-body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.55;background:
-repeating-linear-gradient(0deg,transparent 0 3px,rgba(216,181,113,.012) 3px 4px),
-repeating-linear-gradient(90deg,transparent 0 79px,rgba(216,181,113,.02) 79px 80px)}
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.7;background:
+repeating-linear-gradient(0deg,transparent 0 3px,rgba(120,105,80,.035) 3px 4px),
+repeating-linear-gradient(90deg,transparent 0 79px,rgba(120,105,80,.05) 79px 80px)}
 #fx{position:fixed;inset:0;z-index:-1;pointer-events:none}
 #moon{position:fixed;top:9%;right:11%;width:130px;height:130px;border-radius:50%;z-index:-1;pointer-events:none;
-background:radial-gradient(circle at 38% 34%,#f8f1de,#eadfbe 52%,#c9b483 100%);
-box-shadow:0 0 70px rgba(240,233,216,.32),0 0 150px rgba(216,181,113,.20);
-opacity:.85;animation:breath 11s ease-in-out infinite}
-#moon::after{content:"";position:absolute;left:14%;top:52%;width:26%;height:20%;border-radius:50%;background:rgba(180,158,116,.35);filter:blur(3px);
-box-shadow:34px -26px 0 -6px rgba(180,158,116,.28),-22px -38px 0 -10px rgba(180,158,116,.22)}
-@keyframes breath{50%{box-shadow:0 0 100px rgba(240,233,216,.45),0 0 190px rgba(216,181,113,.28)}}
+background:radial-gradient(circle at 38% 34%,#faf7ee,#e8e0c8 55%,#cfc4a4 100%);
+box-shadow:0 0 70px rgba(160,140,100,.28),0 0 150px rgba(120,105,80,.16);
+opacity:.9;animation:breath 11s ease-in-out infinite}
+#moon::after{content:"";position:absolute;left:14%;top:52%;width:26%;height:20%;border-radius:50%;background:rgba(150,135,100,.30);filter:blur(3px);
+box-shadow:34px -26px 0 -6px rgba(150,135,100,.24),-22px -38px 0 -10px rgba(150,135,100,.18)}
+@keyframes breath{50%{box-shadow:0 0 100px rgba(160,140,100,.40),0 0 190px rgba(120,105,80,.24)}}
 #mt{position:fixed;left:0;right:0;bottom:0;height:36vh;z-index:-1;pointer-events:none}
 #mt svg{width:100%;height:100%;display:block}
 .ring{position:fixed;left:50%;top:50%;border-radius:50%;pointer-events:none;z-index:-1}
-.r1{width:560px;height:560px;margin:-280px 0 0 -280px;border:1px dashed rgba(216,181,113,.25);animation:spin 40s linear infinite}
-.r2{width:760px;height:760px;margin:-380px 0 0 -380px;border:1px solid rgba(200,69,44,.12);animation:spin 70s linear infinite reverse}
+.r1{width:560px;height:560px;margin:-280px 0 0 -280px;border:1px dashed rgba(96,86,64,.28);animation:spin 40s linear infinite}
+.r2{width:760px;height:760px;margin:-380px 0 0 -380px;border:1px solid rgba(184,68,44,.12);animation:spin 70s linear infinite reverse}
 .r1::before{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;
-background:var(--cn2);box-shadow:0 0 16px var(--cn2)}
+background:var(--cn2);box-shadow:0 0 12px rgba(184,68,44,.5)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .box{position:relative;width:100%;max-width:390px;padding:38px 32px 28px;border-radius:14px;
-background:rgba(22,17,11,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-border:1px solid var(--line);box-shadow:0 28px 70px rgba(0,0,0,.6),0 0 50px rgba(216,181,113,.10);
+background:rgba(252,249,240,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+border:1px solid var(--line);box-shadow:0 24px 60px rgba(90,80,60,.25),0 0 40px rgba(168,131,74,.10);
 animation:in .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes in{from{opacity:0;transform:translateY(22px) scale(.96)}}
 .box::before{content:"";position:absolute;inset:-1px;border-radius:15px;padding:1px;z-index:-1;
-background:conic-gradient(from var(--a),transparent 0 60%,#d8b571 78%,#e0664a 86%,transparent 94%);
+background:conic-gradient(from var(--a),transparent 0 60%,#5a5245 78%,#b8442c 86%,transparent 94%);
 -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
-opacity:.7;animation:rot 5s linear infinite}
+opacity:.55;animation:rot 5s linear infinite}
 @keyframes rot{to{--a:360deg}}
-.box::after{content:"";position:absolute;left:8px;top:8px;width:18px;height:18px;border-left:2px solid var(--gold);border-top:2px solid var(--gold);opacity:.8}
+.box::after{content:"";position:absolute;left:8px;top:8px;width:18px;height:18px;border-left:2px solid var(--cn2);border-top:2px solid var(--cn2);opacity:.75}
 .seal{position:absolute;top:16px;right:16px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-border:3px solid var(--cn);border-radius:6px;color:#e0664a;font-size:16px;font-weight:700;
+border:3px solid var(--cn);border-radius:6px;color:var(--cn);font-size:16px;font-weight:700;
 writing-mode:vertical-rl;line-height:1;transform:rotate(7deg);
-box-shadow:inset 0 0 10px rgba(200,69,44,.4),0 0 18px rgba(200,69,44,.22);background:rgba(200,69,44,.07)}
+box-shadow:inset 0 0 10px rgba(184,68,44,.28),0 4px 12px rgba(90,80,60,.15);background:rgba(184,68,44,.06)}
 h1{font-size:21px;margin:0 0 8px;text-align:center;font-weight:700;letter-spacing:3px;
-background:linear-gradient(90deg,#f5efe0,#d8b571 80%);-webkit-background-clip:text;background-clip:text;color:transparent;
-filter:drop-shadow(0 0 12px rgba(216,181,113,.4))}
-.sub{font-size:13px;text-align:center;color:#cdb98e;letter-spacing:3px;margin:0 0 24px}
-.sub em{font-style:normal;color:var(--cn2);text-shadow:0 0 8px rgba(200,69,44,.4)}
+background:linear-gradient(90deg,#3a352c,#8a6a35 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:13px;text-align:center;color:#837b6a;letter-spacing:3px;margin:0 0 24px}
+.sub em{font-style:normal;color:var(--cn)}
 input[type=password]{width:100%;padding:13px 15px;font-size:16px;border-radius:10px;color:var(--txt);
-border:1px solid var(--line);background:rgba(255,255,255,.05);outline:none;transition:.25s;letter-spacing:2px;font-family:"KaiTi","STKaiti",serif}
-input[type=password]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(216,181,113,.22),0 0 22px rgba(216,181,113,.18);background:rgba(255,255,255,.08)}
+border:1px solid var(--line);background:rgba(255,252,244,.8);outline:none;transition:.25s;letter-spacing:2px}
+input[type=password]:focus{border-color:var(--cn2);box-shadow:0 0 0 3px rgba(184,68,44,.15),0 0 18px rgba(168,131,74,.18);background:#fffcf4}
 button{margin-top:15px;width:100%;padding:13px;font-size:17px;font-weight:700;letter-spacing:8px;color:#fff;
-border:0;border-radius:10px;cursor:pointer;transition:.25s;font-family:"KaiTi","STKaiti",serif;
-background:linear-gradient(90deg,var(--gold),var(--cn2));box-shadow:0 10px 28px rgba(200,69,44,.35)}
-button:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(200,69,44,.55);letter-spacing:12px}
+border:0;border-radius:10px;cursor:pointer;transition:.25s;
+background:linear-gradient(90deg,#5a5245,var(--cn2));box-shadow:0 10px 26px rgba(90,82,69,.30)}
+button:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(90,82,69,.42);letter-spacing:12px}
 button:active{transform:none}
 label{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13.5px;color:var(--txt2);cursor:pointer;user-select:none}
-label input{accent-color:var(--gold)}
-#msg{color:#ff8d7a;font-size:14px;min-height:20px;margin-top:10px;text-align:center;letter-spacing:1px;font-family:"KaiTi","STKaiti",serif}
+label input{accent-color:var(--cn)}
+#msg{color:#b8442c;font-size:14px;min-height:20px;margin-top:10px;text-align:center;letter-spacing:1px;font-family:"KaiTi","STKaiti",serif}
 .box.err{animation:shake .4s}
 @keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 .stat{display:flex;justify-content:center;gap:16px;margin-top:20px;font-size:11px;color:var(--txt2);letter-spacing:3px}
 .stat span{display:flex;align-items:center;gap:6px}
-.stat i{width:5px;height:5px;border-radius:50%;background:var(--cn2);box-shadow:0 0 8px var(--cn2);animation:pulse 2s infinite}
+.stat i{width:5px;height:5px;border-radius:50%;background:var(--cn2);box-shadow:0 0 6px rgba(184,68,44,.5);animation:pulse 2s infinite}
 @keyframes pulse{50%{opacity:.4}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
@@ -75,9 +74,9 @@ label input{accent-color:var(--gold)}
 <canvas id="fx"></canvas><div class="ring r1"></div><div class="ring r2"></div>
 <div id="moon"></div>
 <div id="mt"><svg viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
-<path fill="#171208" stroke="rgba(216,181,113,.16)" stroke-width="1" d="M0,225 L110,150 L235,215 L375,120 L520,205 L685,140 L845,210 L1005,130 L1165,200 L1305,155 L1440,215 L1440,320 L0,320 Z"/>
-<path fill="#20180d" stroke="rgba(216,181,113,.10)" stroke-width="1" d="M0,262 L155,195 L305,252 L475,168 L645,248 L825,182 L1005,252 L1165,190 L1325,242 L1440,205 L1440,320 L0,320 Z"/>
-<path fill="#29200f" d="M0,292 L185,245 L365,286 L565,226 L765,282 L965,235 L1165,287 L1335,252 L1440,278 L1440,320 L0,320 Z"/>
+<path fill="rgba(74,66,50,.16)" stroke="rgba(96,86,64,.30)" stroke-width="1" d="M0,225 L110,150 L235,215 L375,120 L520,205 L685,140 L845,210 L1005,130 L1165,200 L1305,155 L1440,215 L1440,320 L0,320 Z"/>
+<path fill="rgba(74,66,50,.26)" stroke="rgba(96,86,64,.24)" stroke-width="1" d="M0,262 L155,195 L305,252 L475,168 L645,248 L825,182 L1005,252 L1165,190 L1325,242 L1440,205 L1440,320 L0,320 Z"/>
+<path fill="rgba(74,66,50,.38)" d="M0,292 L185,245 L365,286 L565,226 L765,282 L965,235 L1165,287 L1335,252 L1440,278 L1440,320 L0,320 Z"/>
 </svg></div>
 <form class="box" id="f">
 <span class="seal">尽调</span>
@@ -99,7 +98,7 @@ async function open_(pw){
   document.open();document.write(h);document.close();
 }
 const m=document.getElementById('msg');
-document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在启卷…';m.style.color='#a3967c';
+document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在启卷…';m.style.color='#837b6a';
   try{if(document.getElementById('rm').checked)localStorage.setItem('ddpw',pw);await open_(pw)}catch(x){m.style.color='';m.textContent='密码不对，请重试';document.getElementById('f').classList.add('err');setTimeout(()=>document.getElementById('f').classList.remove('err'),450);localStorage.removeItem('ddpw')}};
 const s=localStorage.getItem('ddpw');if(s)open_(s).catch(()=>{localStorage.removeItem('ddpw');m.textContent='保存的密码已失效，请重新输入'});
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){(function(){
@@ -109,11 +108,11 @@ for(let i=0;i<n;i++)P.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random(
 rs();addEventListener('resize',rs);let vis=true;document.addEventListener('visibilitychange',()=>vis=!document.hidden);
 (function tick(){if(vis){x.clearRect(0,0,w,h);
 for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
-x.fillStyle=p.r>1.4?'rgba(224,102,74,.7)':'rgba(216,181,113,.65)';
+x.fillStyle=p.r>1.4?'rgba(184,68,44,.42)':'rgba(74,66,50,.38)';
 x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()}
 x.lineWidth=1;
 for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy;
-if(d2<16900){x.strokeStyle='rgba(216,181,113,'+(.2*(1-Math.sqrt(d2)/130)).toFixed(3)+')';
+if(d2<16900){x.strokeStyle='rgba(74,66,50,'+(.15*(1-Math.sqrt(d2)/130)).toFixed(3)+')';
 x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}
 requestAnimationFrame(tick)})()})()}
 </script></body></html>
