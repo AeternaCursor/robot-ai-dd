@@ -1,6 +1,7 @@
 """加密/解密工具。
 用法:
   python tools/crypt.py init 原始.txt      本地首次加密(会提示输入密码), 生成 data/dd.txt.enc
+  python tools/crypt.py repw               换网页密码(不丢网上已有的每周更新记录)
   python tools/crypt.py build             用环境变量 SITE_PASSWORD 解密数据, 生成加密网页 site/index.html
 """
 import base64, gzip, json, os, subprocess, sys, tempfile, getpass, datetime
@@ -75,6 +76,19 @@ if __name__ == '__main__':
         open(ENC_TXT, 'w', encoding='utf-8').write(encrypt(text.encode('utf-8'), pw))
         assert decrypt(open(ENC_TXT, encoding='utf-8').read(), pw).decode('utf-8') == text
         print('完成: data/dd.txt.enc 已生成, 请把同一个密码填到 GitHub 的 SITE_PASSWORD')
+    elif cmd == 'repw':
+        old = getpass.getpass('请输入现在的网页密码: ')
+        text = decrypt(open(ENC_TXT, encoding='utf-8').read(), old).decode('utf-8')
+        new = getpass.getpass('请输入新密码(至少10位): ')
+        if len(new) < 10:
+            sys.exit('密码太短, 请至少 10 位')
+        if getpass.getpass('请再输入一次: ') != new:
+            sys.exit('两次输入不一致')
+        open(ENC_TXT, 'w', encoding='utf-8').write(encrypt(text.encode('utf-8'), new))
+        if input('要同步更新 d:\\Jump\\网页密码.txt 吗? (y/n): ').strip().lower() == 'y':
+            open(r'd:\Jump\网页密码.txt', 'w', encoding='utf-8').write(new)
+            print('已写入 d:\\Jump\\网页密码.txt')
+        print('完成。接下来:\n 1. 把仓库推上去(git add data; git commit; git push)\n 2. 到 GitHub Settings->Secrets 把 SITE_PASSWORD 改成同一个新密码\n 3. 手动 Run workflow(勾选只重新生成网页)')
     elif cmd == 'build':
         build()
     else:

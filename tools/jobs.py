@@ -118,6 +118,12 @@ def main():
     while not set(L[k].strip() or 'x') == {'#'}:
         k += 1
     L[k + 1:k + 1] = [''] + block
+    marks = [i for i, l in enumerate(L) if __import__('re').match(r'^—— \d{4}-\d{2}-\d{2} (招聘|Boss直聘)', l)]
+    for s in reversed(marks[:-8]):  # 只保留最近 8 个块, 防止文档无限膨胀
+        e = s + 1
+        while e < len(L) and not L[e].startswith('—— ') and set(L[e].strip() or 'x') != {'#'}:
+            e += 1
+        del L[s:e]
     crypt.save_txt('\n'.join(L))
     json.dump(cur, open(STATE, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 

@@ -136,8 +136,20 @@ def main():
     while not set(L[k].strip() or 'x') == {'#'}:
         k += 1
     L[k + 1:k + 1] = [''] + block
+    L = trim(L, 8)
     crypt.save_txt('\n'.join(L))
     json.dump(sorted(seen), open(SEEN, 'w'))
+
+
+def trim(L, keep=8):
+    """只保留最近 keep 个日期块, 防止文档无限膨胀"""
+    marks = [i for i, l in enumerate(L) if re.match(r'^—— \d{4}-\d{2}-\d{2} 更新 ——$', l)]
+    for s in reversed(marks[:-keep]):
+        e = s + 1
+        while e < len(L) and not L[e].startswith('—— ') and set(L[e].strip() or 'x') != {'#'}:
+            e += 1
+        del L[s:e]
+    return L
 
 
 if __name__ == '__main__':
