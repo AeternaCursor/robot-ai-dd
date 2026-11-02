@@ -16,9 +16,18 @@ def cn(n):
 E = html.escape
 body = []; toc = []  # toc: (level, id, title)
 sec_open = False; ent_open = False; nsec = ncomp = 0
+ent_buf = []  # 公司条目内的行, 收进"展开明细"折叠块
 def close_ent():
-    global ent_open
-    if ent_open: body.append('</div></details>'); ent_open = False
+    global ent_open, ent_buf
+    if ent_open:
+        ones = ''.join(h for c, h in ent_buf if c == 'one')
+        rest = [(c, h) for c, h in ent_buf if c != 'one']
+        inner = ones
+        if rest:
+            inner += (f'<details class="fld"><summary>展开尽调明细（{len(rest)} 项）</summary>'
+                      f'<div class="fbody">{"".join(h for _, h in rest)}</div></details>')
+        body.append(inner + '</div></details>')
+        ent_open = False; ent_buf = []
 def close_sec():
     global sec_open
     close_ent()
@@ -77,7 +86,11 @@ while i < len(L):
     elif s.startswith('〔') or (s.startswith('【') and s in skip): cls = ' class="sub"'
     elif s.startswith('→'): cls = ' class="vf"'
     t = re.sub(r'^(\d\s*[.、．]?\s*[^：:]{1,14}[：:])', r'<b>\1</b>', t)
-    body.append(f'<p{cls}>{t}</p>')
+    line = f'<p{cls}>{t}</p>'
+    if ent_open:
+        ent_buf.append(('one' if cls == ' class="one"' else '', line))
+    else:
+        body.append(line)
     i += 1
 close_sec()
 nav = []
@@ -185,6 +198,13 @@ details.ent>summary::before{content:"◆";font-size:9px;color:var(--cn2);margin-
 details.ent[open]>summary{color:#8a4a2a}
 details.ent[open]>summary::before{color:var(--cn2)}
 .eb{padding:2px 14px 10px}
+details.fld{margin:9px 0 2px;border:1px dashed rgba(96,86,64,.42);border-radius:8px;background:rgba(252,249,240,.45)}
+details.fld>summary{cursor:pointer;padding:6px 12px;color:#6b5c3f;font-size:13px;list-style:none;letter-spacing:2px;font-family:"KaiTi","STKaiti",serif;user-select:none;transition:.2s}
+details.fld>summary::-webkit-details-marker{display:none}
+details.fld>summary:hover{color:var(--cn)}
+details.fld>summary::before{content:"▸";color:var(--cn2);margin-right:8px;font-size:11px}
+details.fld[open]>summary::before{content:"▾"}
+details.fld .fbody{padding:2px 12px 8px}
 p{margin:5px 0;word-break:break-word}
 p.one{background:linear-gradient(90deg,rgba(168,131,74,.14),rgba(168,131,74,.03));padding:7px 12px;border-radius:8px;border-left:3px solid var(--cn2);color:#4a4234}
 p.sub{font-weight:700;color:#6b5c3f;margin-top:12px;letter-spacing:1px;font-family:"KaiTi","STKaiti",serif}
@@ -254,9 +274,11 @@ const q=document.getElementById('q'),ents=[...document.querySelectorAll('details
 let tm;q.addEventListener('input',()=>{clearTimeout(tm);tm=setTimeout(run,250)});
 function run(){const k=q.value.trim().toLowerCase();let n=0;
 document.querySelectorAll('mark').forEach(m=>m.replaceWith(m.textContent));
-if(!k){ents.forEach(e=>{e.classList.remove('hide');e.open=false});secs.forEach(s=>s.classList.remove('hide'));document.getElementById('cnt').textContent='';return}
+const flds=document.querySelectorAll('details.fld');
+if(!k){ents.forEach(e=>{e.classList.remove('hide');e.open=false});secs.forEach(s=>s.classList.remove('hide'));flds.forEach(f=>f.open=false);document.getElementById('cnt').textContent='';return}
 ents.forEach(e=>{const hit=e.textContent.toLowerCase().includes(k);e.classList.toggle('hide',!hit);e.open=hit&&e.querySelector('summary').textContent.toLowerCase().includes(k)||false;if(hit)n++});
 secs.forEach(s=>{const hasE=s.querySelector('details.ent:not(.hide)');const self=s.textContent.toLowerCase().includes(k);s.classList.toggle('hide',!self);if(self)s.open=true});
+document.querySelectorAll('details.ent:not(.hide)').forEach(e=>{const f=e.querySelector('details.fld');if(f&&e.open)f.open=true});
 document.getElementById('cnt').textContent='匹配公司 '+n+' 家';}
 function go(id){const el=document.getElementById(id);if(!el)return;let p=el;while(p){if(p.tagName==='DETAILS'){p.open=true;p.classList.remove('hide')}p=p.parentElement}el.scrollIntoView();}
 document.querySelectorAll('nav a, a.chip').forEach(a=>a.addEventListener('click',ev=>{ev.preventDefault();go(a.getAttribute('href').slice(1));document.querySelector('nav').classList.remove('on')}));
