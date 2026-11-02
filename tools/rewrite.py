@@ -46,6 +46,9 @@ def ask(batch):
                     continue
             return out
         except Exception as e:
+            if getattr(e, 'code', 0) in (401, 402):  # key无效/余额不足: 立即止损
+                print('致命错误(key或余额):', str(e)[:60])
+                return 'FATAL'
             detail = ''
             if hasattr(e, 'read'):
                 try:
@@ -74,36 +77,42 @@ def main():
     sel = sys.argv[1:]
     if not API or not KEY:
         sys.exit('请先设置 AI_API / AI_KEY 环境变量(见文件开头说明)')
+    DONE = os.path.join(crypt.ROOT, 'data', 'rewrite_done.json')
+    done = set(json.load(open(DONE, encoding='utf-8'))) if os.path.exists(DONE) else set()
     L = crypt.load_txt().split('\n')
-    targets = []  # (行号, 原句)
+    targets = []  # (行号, 公司名, 原句)
     for k, l in enumerate(L):
         if ENT.match(l.strip()) and k and L[k - 1].strip().startswith('====='):
             name = l.strip()[1:-1]
+            if name in done:
+                continue
             if sel and not any(s in name for s in sel):
                 continue
             for j in range(k + 1, min(k + 8, len(L))):
                 if ONE.match(L[j].strip()):
                     targets.append((j, name, L[j]))
                     break
-    print('目标公司', len(targets), '家')
-    changed = rej = 0
-    for b in range(0, len(targets), 5):
-        chunk = targets[b:b + 5]
-        for off, (ln, name, one) in enumerate(chunk):
-            batch = [(name, one.strip(), '\n'.join(L[ln + 1:ln + 40]))]
-            res = ask(batch)
-            new = res.get(0, '')
-            if new and check(one.strip(), new, name, batch[0][2]):
-                head = re.match(r'^(0\s*[.、]?\s*一句话看懂\s*[:：]\s*)', one.strip())
-                L[ln] = (head.group(1) if head else '0. 一句话看懂：') + new
-                changed += 1
-            else:
-                rej += 1
-                print('  跳过(校验不过):', name, '|', new[:40])
-            time.sleep(1)
-        print(f'{min(b + 5, len(targets))}/{len(targets)} 已改写 {changed} 跳过 {rej}')
-    crypt.save_txt('\n'.join(L))
-    print('完成, 共改写', changed, '家, 跳过', rej, '家。请网页确认满意后: git add data; git commit -m "rewrite one-liners"; git push')
+    print('目标公司', len(targets), '家(已完成跳过', len(done), '家)')
+    changed = fatal = 0
+    for idx, (ln, name, one) in enumerate(targets, 1):
+        batch = [(name, one.strip(), '\n'.join(L[ln + 1:ln + 40]))]
+        res = ask(batch)
+        if res == 'FATAL':
+            fatal = 1
+            print('余额/key问题, 提前保存并退出')
+            break
+        new = res.get(0, '') if isinstance(res, dict) else ''
+        if new and check(one.strip(), new, name, batch[0][2]):
+            head = re.match(r'^(0\s*[.、]?\s*一句话看懂\s*[:：]\s*)', one.strip())
+            L[ln] = (head.group(1) if head else '0. 一句话看懂：') + new
+            done.add(name)
+            changed += 1
+        if idx % 50 == 0 or idx == len(targets) or fatal:
+            crypt.save_txt('\n'.join(L))
+            json.dump(sorted(done), open(DONE, 'w', encoding='utf-8'), ensure_ascii=False)
+            print(f'{idx}/{len(targets)} 已改写 {changed} 累计完成 {len(done)}')
+        time.sleep(1)
+    print('本次改写', changed, '家, 累计完成', len(done), '家。网页确认后: git add data; git commit -m "rewrite"; git push')
 
 
 if __name__ == '__main__':
