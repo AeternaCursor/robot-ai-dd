@@ -102,14 +102,17 @@ def main():
         L += ['', '#' * 80, LOG_TITLE,
               '说明：海外公司数据来自其官网招聘系统（Ashby/Greenhouse/Lever 等）的公开接口，每周对比在招岗位变化；中国公司条目由“Boss直聘手动更新”生成。岗位增减是业务扩张或收缩的参考信号。',
               '#' * 80, '']
-    if block[0] in L:  # 同一天重跑: 有新内容才替换, 否则保留原记录
+    if block[0] in L:  # 同一天重跑: 旧记录合并新内容, 无新内容则不动
         s = L.index(block[0])
         e = s + 1
         while e < len(L) and not L[e].startswith('—— ') and set(L[e].strip() or 'x') != {'#'}:
             e += 1
-        if not lines:
+        old = [x for x in L[s + 1:e] if x.startswith('- ') and '无明显变化' not in x and '抓取失败' not in x]
+        fresh = [x for x in lines if x not in old]
+        if not fresh:
             print('同日重跑无变化, 保持原记录')
             return
+        block = [block[0]] + old + fresh + (['- 以下公司本周抓取失败：' + '、'.join(fails)] if fails else []) + ['']
         del L[s:e]
     k = next(k for k, l in enumerate(L) if l.startswith(LOG_TITLE))
     while not set(L[k].strip() or 'x') == {'#'}:
