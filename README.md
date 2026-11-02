@@ -88,6 +88,32 @@ python tools\jobs_cn.py 宇树科技      # 只跑某一家
 
 **注意**：每周最多跑一次（防账号被限制）；搜索结果可能含同名公司，仅供参考。用完后可把 `robot-ai-dd` 文件夹删掉，保持本机干净。
 
+### 5. AI 接口配置（可选，用于全量改写"一句话看懂"）
+
+网页已上线 5 家 AI 改写样稿；想让 AI 改写全部 523 家时，按此配置（一次性操作，约花 1 元）：
+
+**第一步：申请 AI 接口（DeepSeek）**
+1. 打开 https://platform.deepseek.com 注册/登录
+2. 充值（10 元足够，实际改写 523 家约花 0.5~1 元）
+3. 左侧 **API Keys** → 创建 → 复制 `sk-` 开头的 key
+
+**第二步：运行改写工具**（仓库已下载到电脑的前提下，PowerShell 逐行）
+```powershell
+cd d:\Jump\robot-ai-dd
+$env:SITE_PASSWORD='你的网页密码'
+$env:AI_API='https://api.deepseek.com/chat/completions'
+$env:AI_KEY='你复制的key'
+$env:AI_MODEL='deepseek-chat'
+python tools\rewrite.py              # 全部剩余公司(断点续跑, 跑过的自动跳过)
+python tools\rewrite.py 宇树科技      # 只改一家试效果
+```
+
+**第三步：验收上线**
+- 工具自带校验：新句必须保留原句数字、超长/过短自动拦截保留原句
+- 跑完后让 AI 助手抽查 10 家防编造，确认后 `git add data; git commit -m "rewrite"; git push`，再 Run workflow（勾选只重新生成网页）
+
+**安全**：key 只在命令行临时用，绝不写进文件/仓库；**用完立即回平台删除该 key**。另外不要用智谱 glm-4-flash 免费模型做这事（实测会编造事实）。
+
 ## 五、安全说明
 
 - 仓库是公开的，但里面只有加密后的数据，没有密码看不到内容。
