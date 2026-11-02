@@ -1,54 +1,70 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>请输入密码</title>
 <style>
-:root{--acc:#4f8cff;--acc2:#22d3ee;--txt:#dbe4f5;--txt2:#8fa3c8;--line:rgba(120,160,255,.16)}
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+:root{--acc:#4f8cff;--acc2:#29e6ff;--txt:#d8e4fb;--txt2:#7e93bd;--line:rgba(96,150,255,.22)}
 *{box-sizing:border-box}
+html{background:#050912}
 body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-font:16px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);
-background:#070b16;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:-40%;z-index:-2;pointer-events:none;background:
-radial-gradient(600px 400px at 15% 10%,rgba(79,140,255,.18),transparent 60%),
-radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.12),transparent 60%),
-radial-gradient(800px 600px at 50% 100%,rgba(124,58,237,.14),transparent 60%);animation:aur 22s ease-in-out infinite alternate}
+font:16px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--txt);overflow:hidden}
+body::before{content:"";position:fixed;inset:-40%;z-index:-3;pointer-events:none;background:
+radial-gradient(700px 500px at 15% 10%,rgba(79,140,255,.20),transparent 60%),
+radial-gradient(800px 600px at 85% 20%,rgba(41,230,255,.13),transparent 60%),
+radial-gradient(900px 700px at 50% 105%,rgba(124,58,237,.16),transparent 60%);animation:aur 20s ease-in-out infinite alternate}
 @keyframes aur{to{transform:translate(3%,-4%) scale(1.07)}}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;background:
-repeating-linear-gradient(0deg,transparent 0 39px,rgba(140,170,255,.035) 39px 40px),
-repeating-linear-gradient(90deg,transparent 0 39px,rgba(140,170,255,.035) 39px 40px)}
-.box{position:relative;width:100%;max-width:380px;padding:34px 30px 30px;border-radius:18px;
-background:rgba(13,19,38,.66);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-border:1px solid var(--line);box-shadow:0 24px 60px rgba(0,0,0,.5),0 0 40px rgba(79,140,255,.10);
-animation:in .6s cubic-bezier(.2,.8,.2,1) both}
-@keyframes in{from{opacity:0;transform:translateY(18px) scale(.97)}}
+body::after{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.6;background:
+repeating-linear-gradient(0deg,transparent 0 39px,rgba(120,170,255,.04) 39px 40px),
+repeating-linear-gradient(90deg,transparent 0 39px,rgba(120,170,255,.04) 39px 40px)}
+#fx{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.ring{position:fixed;left:50%;top:50%;border-radius:50%;pointer-events:none;z-index:-1}
+.r1{width:560px;height:560px;margin:-280px 0 0 -280px;border:1px dashed rgba(41,230,255,.22);animation:spin 40s linear infinite}
+.r2{width:760px;height:760px;margin:-380px 0 0 -380px;border:1px solid rgba(79,140,255,.10);animation:spin 70s linear infinite reverse}
+.r1::before{content:"";position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;
+background:var(--acc2);box-shadow:0 0 16px var(--acc2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.box{position:relative;width:100%;max-width:390px;padding:36px 32px 28px;border-radius:18px;
+background:rgba(10,16,34,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+border:1px solid var(--line);box-shadow:0 28px 70px rgba(0,0,0,.6),0 0 50px rgba(41,230,255,.10);
+animation:in .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{from{opacity:0;transform:translateY(22px) scale(.96)}}
 .box::before{content:"";position:absolute;inset:-1px;border-radius:19px;padding:1px;z-index:-1;
-background:linear-gradient(120deg,var(--acc),transparent 30%,transparent 70%,var(--acc2));
+background:conic-gradient(from var(--a),transparent 0 60%,#5ea0ff 78%,#29e6ff 86%,transparent 94%);
 -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
-opacity:.65}
+opacity:.7;animation:rot 5s linear infinite}
+@keyframes rot{to{--a:360deg}}
+.box::after{content:"";position:absolute;left:8px;top:8px;width:18px;height:18px;border-left:2px solid var(--acc2);border-top:2px solid var(--acc2);opacity:.8}
 h1{font-size:19px;margin:0 0 6px;text-align:center;font-weight:700;letter-spacing:1px;
-background:linear-gradient(90deg,#fff,#9fc3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{font-size:12px;text-align:center;color:var(--txt2);letter-spacing:2px;margin:0 0 24px}
-input[type=password]{width:100%;padding:12px 14px;font-size:16px;border-radius:10px;color:var(--txt);
-border:1px solid var(--line);background:rgba(255,255,255,.06);outline:none;transition:.25s}
-input[type=password]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.25);background:rgba(255,255,255,.09)}
-button{margin-top:14px;width:100%;padding:12px;font-size:16px;font-weight:600;letter-spacing:4px;color:#fff;
+background:linear-gradient(90deg,#fff,#9fc3ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+filter:drop-shadow(0 0 12px rgba(79,140,255,.4))}
+.sub{font:600 10px/1 ui-monospace,Consolas,monospace;text-align:center;color:var(--acc2);letter-spacing:4px;margin:0 0 26px}
+input[type=password]{width:100%;padding:13px 15px;font-size:16px;border-radius:10px;color:var(--txt);
+border:1px solid var(--line);background:rgba(255,255,255,.06);outline:none;transition:.25s;letter-spacing:2px}
+input[type=password]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,140,255,.25),0 0 22px rgba(41,230,255,.2);background:rgba(255,255,255,.09)}
+button{margin-top:15px;width:100%;padding:13px;font-size:16px;font-weight:600;letter-spacing:6px;color:#fff;
 border:0;border-radius:10px;cursor:pointer;transition:.25s;
-background:linear-gradient(90deg,var(--acc),var(--acc2));box-shadow:0 8px 24px rgba(79,140,255,.35)}
-button:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(79,140,255,.5)}
+background:linear-gradient(90deg,var(--acc),var(--acc2));box-shadow:0 10px 28px rgba(41,230,255,.35)}
+button:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(41,230,255,.55);letter-spacing:9px}
 button:active{transform:none}
 label{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:13.5px;color:var(--txt2);cursor:pointer;user-select:none}
 label input{accent-color:var(--acc)}
 #msg{color:#ff7d90;font-size:14px;min-height:20px;margin-top:10px;text-align:center;letter-spacing:1px}
 .box.err{animation:shake .4s}
-@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
-.foot{margin-top:18px;text-align:center;font-size:11px;color:var(--txt2);letter-spacing:1px;opacity:.7}
-@media(prefers-reduced-motion:reduce){body::before,.box,button{animation:none!important;transition:none}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.stat{display:flex;justify-content:center;gap:14px;margin-top:20px;font:600 9px/1 ui-monospace,Consolas,monospace;color:var(--txt2);letter-spacing:2px}
+.stat span{display:flex;align-items:center;gap:5px}
+.stat i{width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.4}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
-<body><form class="box" id="f">
+<body>
+<canvas id="fx"></canvas><div class="ring r1"></div><div class="ring r2"></div>
+<form class="box" id="f">
 <h1>机器人 / 具身智能 / AI 公司尽调</h1>
-<p class="sub">DUE DILIGENCE · ENCRYPTED</p>
+<p class="sub">DUE DILIGENCE · ENCRYPTED ACCESS</p>
 <input type="password" id="pw" placeholder="请输入密码" autocomplete="current-password" autofocus>
 <label><input type="checkbox" id="rm"> 在这台设备上记住密码</label>
 <button type="submit">打开</button><div id="msg"></div>
-<p class="foot">523 家公司 · 每周自动更新 · AES-256 端到端加密</p>
+<div class="stat"><span><i></i>SECURE</span><span>AES-256</span><span>E2EE</span><span>523 COS</span></div>
 </form>
 <script id="blob" type="application/json">__BLOB__</script>
 <script>
@@ -64,4 +80,17 @@ const m=document.getElementById('msg');
 document.getElementById('f').onsubmit=async e=>{e.preventDefault();const pw=document.getElementById('pw').value;m.textContent='正在解密…';m.style.color='#8fa3c8';
   try{if(document.getElementById('rm').checked)localStorage.setItem('ddpw',pw);await open_(pw)}catch(x){m.style.color='';m.textContent='密码不对，请重试';document.getElementById('f').classList.add('err');setTimeout(()=>document.getElementById('f').classList.remove('err'),450);localStorage.removeItem('ddpw')}};
 const s=localStorage.getItem('ddpw');if(s)open_(s).catch(()=>{localStorage.removeItem('ddpw');m.textContent='保存的密码已失效，请重新输入'});
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){(function(){
+const c=document.getElementById('fx'),x=c.getContext('2d');let w,h,P=[];
+function rs(){w=c.width=innerWidth;h=c.height=innerHeight;const n=Math.min(70,Math.floor(w*h/18000));P=[];
+for(let i=0;i<n;i++)P.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.5+.5})}
+rs();addEventListener('resize',rs);let vis=true;document.addEventListener('visibilitychange',()=>vis=!document.hidden);
+(function tick(){if(vis){x.clearRect(0,0,w,h);x.fillStyle='rgba(140,190,255,.7)';
+for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
+x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()}
+x.lineWidth=1;
+for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy;
+if(d2<16900){x.strokeStyle='rgba(79,140,255,'+(.3*(1-Math.sqrt(d2)/130)).toFixed(3)+')';
+x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}}
+requestAnimationFrame(tick)})()})()}
 </script></body></html>
